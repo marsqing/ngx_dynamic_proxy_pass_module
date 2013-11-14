@@ -44,7 +44,9 @@ static ngx_command_t ngx_dynamic_proxy_pass_module_commands[] = {
 static ngx_int_t ngx_http_dypp_preconfig(ngx_conf_t *cf);
 
 ngx_int_t ngx_http_dypp_get_variable (ngx_http_request_t *r, ngx_http_variable_value_t *v, uintptr_t data);
+
 static u_char* call_lua(ngx_http_request_t *r);
+
 ngx_int_t   ngx_http_dypp_init(ngx_cycle_t *cycle); 
 
 static int get_cookie(lua_State *L) ;
