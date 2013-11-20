@@ -10,6 +10,9 @@ function choose_upstream()
 	--for key, value in pairs(ups) do
 	--	f:write(string.format("%s %s %d %d\n", key, value, 1, 1));
 	--end
+	if #ups == 0 then
+		return;
+	end
 	ups_cnt = #ups / 2;
 	i = 2;
 	bucket_cnt = 0;
