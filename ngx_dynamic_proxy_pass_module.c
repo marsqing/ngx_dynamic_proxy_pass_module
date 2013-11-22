@@ -8,7 +8,7 @@
 
 typedef struct {
 	ngx_str_t dp_domain;
-	ngx_str_t lua_file;
+	ngx_str_t lb_lua_file;
 	lua_State *L;
 } ngx_http_dypp_loc_conf_t;
 
@@ -25,11 +25,11 @@ static ngx_command_t ngx_dynamic_proxy_pass_module_commands[] = {
 		NULL
 	},
 
-	{ ngx_string("lua_file"),
+	{ ngx_string("lb_lua_file"),
 		NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
 		ngx_conf_set_str_slot,
 		NGX_HTTP_LOC_CONF_OFFSET,
-		offsetof(ngx_http_dypp_loc_conf_t, lua_file),
+		offsetof(ngx_http_dypp_loc_conf_t, lb_lua_file),
 		NULL },
 
 
@@ -116,8 +116,8 @@ static void* ngx_http_dypp_create_loc_conf(ngx_conf_t* cf) {
 	}
 	conf->dp_domain.len = 0;
 	conf->dp_domain.data = NULL;
-	conf->lua_file.data = NULL;
-	conf->lua_file.len = 0;
+	conf->lb_lua_file.data = NULL;
+	conf->lb_lua_file.len = 0;
 
 	return conf;
 }
@@ -127,7 +127,7 @@ static char* ngx_http_dypp_merge_loc_conf(ngx_conf_t *cf, void *parent, void *ch
 	ngx_http_dypp_loc_conf_t *conf = child;
 	
 	ngx_conf_merge_str_value(conf->dp_domain, prev->dp_domain, "");
-	ngx_conf_merge_str_value(conf->lua_file, prev->lua_file, "");
+	ngx_conf_merge_str_value(conf->lb_lua_file, prev->lb_lua_file, "");
 	
 	return NGX_CONF_OK;
 }
@@ -282,7 +282,7 @@ ngx_int_t ngx_http_dypp_get_variable (ngx_http_request_t *r, ngx_http_variable_v
 		lua_register(hdlc->L, "get_upstream_list", get_upstream_list);
 		lua_register(hdlc->L, "get_ngx_http_variable", get_ngx_http_variable);
 		
-		if (luaL_loadfile(hdlc->L, (char*)hdlc->lua_file.data) || lua_pcall(hdlc->L,0,0,0)) {
+		if (luaL_loadfile(hdlc->L, (char*)hdlc->lb_lua_file.data) || lua_pcall(hdlc->L,0,0,0)) {
 			return NGX_ERROR;
 		}
 	

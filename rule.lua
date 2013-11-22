@@ -13,20 +13,27 @@ function choose_upstream()
 	if #ups == 0 then
 		return;
 	end
-	ups_cnt = #ups / 2;
+	ups_cnt = #ups;
 	i = 2;
 	bucket_cnt = 0;
-	while i <= #ups do
+	while i <= ups_cnt do
 		bucket_cnt = bucket_cnt + ups[i]	
 		i = i + 2;
 	end
 	modus = uid % bucket_cnt;
 	--modus = 0;
 	--f:write(string.format("%d %d\n", modus, uid));
-	if modus < ups[2] then
-		upstream = ups[1];
-	else
-		upstream = ups[3];
+	i = 2;
+	j = 1;
+	bucket_search = ups[i];
+	while j < ups_cnt do
+		if modus < bucket_search then
+			upstream = ups[j];
+			break;
+		end
+		i = i + 2;
+		bucket_search = bucket_search + ups[i];
+		j = j + 2;
 	end
 end
 
