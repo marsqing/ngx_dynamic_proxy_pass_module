@@ -56,7 +56,7 @@ static int get_ngx_http_variable(lua_State *L);
 
 static ngx_http_module_t ngx_dynamic_proxy_pass_module_ctx = {
 	ngx_http_dypp_preconfig,
-	ngx_http_dypp_postconfig,
+	NULL,
 	NULL,
 	NULL,
 	NULL,
@@ -80,33 +80,6 @@ ngx_module_t ngx_dynamic_proxy_pass_module = {
 	NGX_MODULE_V1_PADDING
 };
 
-
-//ngx_int_t    
-//ngx_http_dypp_init(ngx_cycle_t *cycle){
-//	L = luaL_newstate();
-//	if(L == NULL) {
-//		ngx_log_error(NGX_LOG_ERR, cycle->log, 0, "Can not init lua");
-//		return NGX_ERROR;
-//	}
-//	luaL_openlibs(L);
-//	lua_register(L, "get_cookie", get_cookie);
-//	lua_register(L, "get_upstream_list", get_upstream_list);
-//	lua_register(L, "get_ngx_http_variable", get_ngx_http_variable);
-////	lua_pushcfunction(L, get_cookie);
-////	lua_setglobal(L, "get_cookie");
-////	lua_pushcfunction(L, get_upstream_list);
-////	lua_setglobal(L, "get_upstream_list");
-////	lua_pushcfunction(L, get_ngx_http_variable);
-////	lua_setglobal(L, "get_ngx_http_variable");
-//	//int error = luaL_loadstring(L, "f=io.open(\"/Users/marsqing/Projects/tmp/luajit/log\", \"w\");f:write(\"success\");f:close();xx=101;") || lua_pcall(L, 0, 0, 0);
-//	//int error = luaL_loadfile(L, "/Users/marsqing/Projects/tengine/ngx_dynamic_proxy_pass_module/rule.lua")|| lua_pcall(L, 0, 0, 0);
-//	if (luaL_loadfile(L, "/Users/hupeng/loadbalance/tengine/ngx_dynamic_proxy_pass_module/rule.lua") || lua_pcall(L,0,0,0)) {
-//		return NGX_ERROR;
-//	}
-//	//ngx_log_error(NGX_LOG_INFO, cycle->log, 0, "dypp_lua_file %s", dypp_lua_file);
-//	//int error = luaL_loadfile(L, "/Users/hupeng/loadbalance/tengine/ngx_dynamic_proxy_pass_module/rule.lua");
-//	return NGX_OK;
-//}
 static void* ngx_http_dypp_create_loc_conf(ngx_conf_t* cf) {
 	ngx_http_dypp_loc_conf_t* conf;
 
@@ -208,50 +181,13 @@ static int get_upstream_list(lua_State *L) {
 				chosen_upstream_cnt++;
 				lua_pushlstring(L, (char*)duscf->upstream->host.data, duscf->upstream->host.len);
 				lua_pushinteger(L, duscf->upstream->servers->nelts);
-				/*
-				ngx_uint_t j;
-				ngx_http_upstream_server_t *us;
-				ngx_log_error(NGX_LOG_ERR, cur_r->connection->log, 0, "DYNAMIC %V", &duscf->upstream->host);
-				us = duscf->upstream->servers->elts;
-				for (j = 0; j < duscf->upstream->servers->nelts; j++) {
-				    ngx_log_error(NGX_LOG_ERR, cur_r->connection->log, 0, "DYNAMIC server %V", &us[j].addrs->name);
-				}
-				*/
 			}
 		}
 
 	}
 
-
-	//lua_pushstring(L, "user-web_20130909");
-	//lua_pushinteger(L, 2);
-	//lua_pushstring(L, "user-web_20130910");
-	//lua_pushinteger(L, 4);
 	return 2 * chosen_upstream_cnt;
 }
-
-static ngx_int_t ngx_http_dypp_postconfig(ngx_conf_t *cf){
-	// attach module handler
-	/*
-	ngx_http_handler_pt        *h;
-	ngx_http_core_main_conf_t  *cmcf;
-	cmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_core_module);
-	h = ngx_array_push(&cmcf->phases[NGX_HTTP_PREACCESS_PHASE].handlers);
-	if (h == NULL) {
-		return NGX_ERROR;
-	}
-	*h = ngx_http_hello_world_handler;
-	*/
-	ngx_http_dypp_loc_conf_t *conf;
-
-	conf = ngx_http_conf_get_module_loc_conf(cf, ngx_dynamic_proxy_pass_module);
-//	ngx_log_debug(NGX_LOG_DEBUG_HTTP, cf->log, 0, "INIT lua, %s", (char*)conf->lua_file.data);
-//								
-//	dypp_lua_file = (char*)conf->lua_file.data;
-
-	return NGX_OK;
-}
-
 
 static u_char* call_lua(ngx_http_request_t *r, lua_State *L) {
 	cur_r = r;
